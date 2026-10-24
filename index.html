@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Automation Planner</title>
+<meta name="description" content="A live planner that takes a business owner's weekly tasks, scores how well AI and automation fit each one, estimates hours saved, build cost and payback, decides where a person must approve, and orders it all into a week-by-week roadmap.">
+<style>
+
+  :root { --bg:#0f1214; --surface:#161b1e; --surface-2:#1c2226; --border:#283036; --text:#e8edf0; --muted:#98a6ad; --gold:#e3b341; --good:#4ade80;
+          --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  * { box-sizing:border-box; } [hidden] { display:none !important; }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 var(--sans); }
+  .wrap { max-width:1320px; margin:0 auto; padding:0 16px; }
+  .topbar { border-bottom:1px solid var(--border); } .topbar .wrap { display:flex; justify-content:space-between; align-items:center; gap:12px; padding-top:12px; padding-bottom:12px; }
+  .eyebrow { font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+  .pill { font-size:12px; border:1px solid var(--border); border-radius:999px; padding:3px 10px; color:var(--muted); white-space:nowrap; }
+  .hero { padding:34px 0 18px; } h1 { font-size:clamp(28px,4vw,42px); line-height:1.12; margin:6px 0 12px; letter-spacing:-.01em; max-width:30ch; }
+  .lede { color:var(--muted); font-size:18px; max-width:84ch; margin:0; } .lede strong { color:var(--text); }
+  section { padding:26px 0; } h2 { font-size:23px; margin:0 0 6px; } .sub { color:var(--muted); margin:0 0 18px; }
+  .benefits { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:22px; }
+  .benefits div { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; font-size:15px; color:var(--muted); } .benefits b { color:var(--text); display:block; font-size:16px; margin-bottom:2px; }
+
+  
+  /* ---------- app: Notion-style workspace ---------- */
+  .app { border-radius:12px; overflow:hidden; border:1px solid #3a444a; box-shadow:0 20px 60px rgba(0,0,0,.45); background:#fff; color:#37352f; font:14px/1.5 ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; }
+  .nbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:10px 16px; border-bottom:1px solid #ededec; font-size:13px; color:#787774; }
+  .nbar b { color:#37352f; font-size:14px; } .nbar .sp { flex:1; }
+  .nbar label { display:flex; gap:6px; align-items:center; } .nbar input { width:70px; font:13px inherit; font-family:inherit; border:1px solid #e3e2e0; border-radius:4px; padding:3px 6px; }
+  .nbtn { font:500 13px inherit; font-family:inherit; background:#2383e2; color:#fff; border:0; border-radius:5px; padding:5px 11px; cursor:pointer; } .nbtn.sec { background:#fff; color:#37352f; border:1px solid #e3e2e0; }
+  .body { padding:14px 16px; }
+  .h { font-size:20px; font-weight:700; margin:0 0 2px; } .hsub { color:#787774; font-size:13px; margin:0 0 10px; }
+  .tw { overflow-x:auto; } table.n { border-collapse:collapse; width:100%; min-width:860px; font-size:13px; }
+  table.n th { color:#787774; font-weight:500; text-align:left; border-bottom:1px solid #ededec; padding:5px 6px; white-space:nowrap; }
+  table.n td { border-bottom:1px solid #f1f1ef; padding:4px 6px; vertical-align:middle; }
+  table.n input[type=text], table.n input[type=number], table.n select { font:13px inherit; font-family:inherit; border:1px solid transparent; border-radius:4px; padding:3px 5px; background:transparent; width:100%; color:#37352f; }
+  table.n input:hover, table.n select:hover, table.n input:focus, table.n select:focus { border-color:#e3e2e0; background:#fbfbfa; }
+  table.n input[type=number] { width:64px; } td.nm { min-width:230px; }
+  .fit { font-size:12px; border-radius:4px; padding:1px 6px; white-space:nowrap; } .fit.high { background:#dbeddb; color:#1c3829; } .fit.medium { background:#fdecc8; color:#402c1b; } .fit.low { background:#ffe2dd; color:#5d1715; }
+  .x { border:0; background:none; color:#b9b9b7; cursor:pointer; font-size:16px; } .x:hover { color:#e03e3e; }
+  .addrow td { color:#9b9a97; cursor:pointer; } .addrow td:hover { background:#f7f7f5; }
+  .skip { background:#fbf3db; color:#5c4b13; border-radius:5px; padding:6px 9px; font-size:12.5px; margin-top:8px; }
+  .sum { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:16px 0 12px; }
+  .sum div { background:#f7f7f5; border-radius:8px; padding:10px 12px; } .sum small { color:#787774; font-size:12px; } .sum b { display:block; font-size:22px; }
+  .road { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+  .col { background:#f7f7f5; border-radius:8px; padding:8px; min-width:0; } .col h5 { margin:2px 4px 8px; font-size:12.5px; color:#787774; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+  .cardn { background:#fff; border:1px solid #ededec; border-radius:6px; padding:8px 9px; margin-bottom:7px; box-shadow:0 1px 2px rgba(15,15,15,.04); }
+  .cardn b { display:block; font-size:13px; } .cardn p { margin:4px 0; font-size:12.5px; color:#55534e; } .cardn small { color:#787774; font-size:12px; display:block; }
+  .mode { display:inline-block; font-size:11.5px; border-radius:4px; padding:1px 6px; margin-top:4px; background:#e7f3f8; color:#183347; } .mode.auto { background:#eeeeec; color:#32302c; }
+  .empty { color:#9b9a97; font-size:12.5px; padding:4px; }
+  .note { font-size:12px; color:#787774; margin-top:10px; }
+/* ---------- page ---------- */
+  .break { background:linear-gradient(0deg,rgba(227,179,65,.07),rgba(227,179,65,.07)),var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+  .cards2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .panel { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px; min-width:0; } .panel h3 { margin:0 0 6px; font-size:16px; } .panel p { margin:0; color:var(--muted); font-size:14.5px; }
+  ol.steps { list-style:none; counter-reset:s; padding:0; margin:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+  ol.steps li { counter-increment:s; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; font-size:15px; }
+  ol.steps li::before { content:counter(s); display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%; background:var(--surface-2); border:1px solid var(--border); font-weight:700; margin-bottom:8px; }
+  ol.steps li.yours { border-color:var(--good); } .whom { display:block; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:4px; } li.yours .whom { color:var(--good); }
+  .tiers { display:grid; grid-template-columns:1fr 1.3fr 1fr; gap:14px; align-items:start; }
+  .tier { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; } .tier.featured { border:2px solid var(--gold); position:relative; }
+  .tier .badge2 { position:absolute; top:-12px; left:20px; background:var(--gold); color:#1a1405; font-weight:800; font-size:12px; letter-spacing:.05em; text-transform:uppercase; border-radius:6px; padding:3px 10px; }
+  .tier h3 { margin:0; font-size:18px; } .price { font-size:34px; font-weight:800; margin:6px 0 2px; } .price s { font-size:18px; color:var(--muted); font-weight:400; margin-left:8px; }
+  .tier .for { color:var(--muted); font-size:14px; margin:0 0 12px; } .tier ul { margin:0; padding-left:18px; font-size:14.5px; } .tier li { margin:4px 0; }
+  .stack { width:100%; border-collapse:collapse; font-size:14.5px; margin:10px 0 4px; } .stack td { padding:6px 0; border-bottom:1px solid var(--border); vertical-align:top; } .stack td:last-child { text-align:right; color:var(--muted); white-space:nowrap; padding-left:10px; }
+  .stack tr.bonus td:first-child::before { content:"Bonus · "; color:var(--gold); font-weight:700; } .stack tr.total td { border-bottom:0; font-weight:800; color:var(--text); padding-top:10px; } .stack tr.total td:last-child { color:var(--text); }
+  .ms { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:16px; }
+  .ms .tag2 { font-size:12px; color:var(--gold); text-transform:uppercase; letter-spacing:.06em; font-weight:700; } .ms .mp { font-size:26px; font-weight:800; margin:2px 0; } .ms .days { color:var(--muted); font-size:13px; }
+  .ms ul { margin:8px 0; padding-left:18px; font-size:14.5px; } .ms .acc { font-size:13.5px; color:var(--muted); border-top:1px solid var(--border); padding-top:8px; } .ms .acc b { color:var(--text); }
+  .costs { margin-top:14px; font-size:14.5px; color:var(--muted); } .costs b { color:var(--text); }
+  .cta { background:var(--surface); border:2px solid var(--good); border-radius:16px; padding:24px; } .cta h2 { font-size:24px; } .cta p { margin:6px 0 0; max-width:80ch; } .cta .urgency { color:var(--muted); font-size:14px; margin-top:12px; }
+  .need { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 18px; padding-left:20px; margin:0; }
+  pre.tree { font:13px/1.6 var(--mono); background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px; overflow-x:auto; margin:0 0 10px; }
+  footer { border-top:1px solid var(--border); margin-top:18px; padding:22px 0 40px; color:var(--muted); font-size:14px; } footer p { margin:0 0 8px; max-width:95ch; }
+  
+  @media (max-width:980px) { .cards2, .ms, .tiers, .benefits { grid-template-columns:1fr; } ol.steps { grid-template-columns:1fr 1fr; } .tier.featured { order:-1; } .road, .sum { grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px) { ol.steps, .need, .road, .sum { grid-template-columns:1fr; } .pill { display:none; } }
+  @media (prefers-reduced-motion:reduce) { * { transition:none !important; animation:none !important; } }
+</style>
+</head>
+<body>
+<header class="topbar"><div class="wrap"><span class="eyebrow">Your weekly tasks → fit, savings and payback → roadmap · Live preview</span><span class="pill">Sample week · invented</span></div></header>
+<main class="wrap">
+  <div class="hero">
+    <span class="eyebrow">For an owner who wants AI working across the whole business</span>
+    <h1>Find out which jobs AI should take off your plate first, and what each one is worth.</h1>
+    <p class="lede"><strong>This is a working planner, not a video.</strong> List what fills your week. It scores how well AI fits each task, estimates the hours you get back, the build cost and the payback, flags where you should approve the output, and orders everything into a roadmap. Change any number and the plan is worked out again.</p>
+    <div class="benefits">
+      <div><b>Start where the hours are</b>The roadmap begins with the task that pays back fastest, not the flashiest tool.</div>
+      <div><b>You stay in charge</b>Anything customer-facing or risky is set up as "AI drafts, you approve".</div>
+      <div><b>Honest about the misses</b>Work that needs your judgment, like negotiating, is marked "not yet" instead of being forced.</div>
+    </div>
+  </div>
+
+  <div class="app" id="app" aria-label="AI automation planner preview">
+    <div class="nbar"><b>📋 AI Automation Plan</b><span>/ Weekly tasks</span><span class="sp"></span>
+      <label>Your time $/hr <input type="number" id="sRate" value="50" min="1" data-testid="s-rate"></label>
+      <label>Build $/hr <input type="number" id="sBuild" value="30" min="1" data-testid="s-build"></label>
+      <button type="button" class="nbtn sec" id="reset" data-testid="reset">Reset sample</button></div>
+    <div class="body">
+      <p class="h">Weekly tasks</p><p class="hsub">Hours a week, how repetitive (1 to 5), how much judgment it needs (1 to 5), whether the inputs are already digital, and the risk if it goes wrong.</p>
+      <div class="tw"><table class="n"><thead><tr><th>Task</th><th>Type</th><th>Hrs/wk</th><th>Repetitive</th><th>Judgment</th><th>Digital</th><th>Risk</th><th>Fit</th><th>Saved/wk</th><th></th></tr></thead>
+        <tbody id="rows" data-testid="rows"></tbody>
+        <tbody><tr class="addrow"><td colspan="10" id="add" data-testid="add">+ New task</td></tr></tbody></table></div>
+      <div class="skip" id="skipped" data-testid="skipped" hidden></div>
+      <div class="sum" id="sum" data-testid="sum"></div>
+      <div class="road" id="road" data-testid="road"></div>
+      <p class="note">Estimates, not promises: hours saved use 60% / 35% / 10% of a task's time for high / medium / low fit, and build effort is a typical figure for each type of task. Your real numbers come from a short call.</p>
+    </div>
+  </div>
+
+  <section aria-label="Try to break it">
+    <div class="break"><strong>Try to break it.</strong> Change the posts task to half an hour a week and watch it drop down the roadmap. Raise "Your time" to $100 and payback halves. Add a task with no name or zero hours and it's set aside with the reason. Switch receipts to digital and its score goes up. Set the supplier task's risk to low and see that it still isn't worth automating.</div>
+  </section>
+
+  <section aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <p class="sub">Four steps, one of them yours.</p>
+    <ol class="steps">
+      <li class="yours"><span class="whom">You</span>A short call: walk me through a normal week and the tools you already use.</li>
+      <li><span class="whom">Me</span>Fill this planner with your real tasks and agree the first automation together.</li>
+      <li><span class="whom">Me</span>Build it in week one, with you approving anything that talks to customers.</li>
+      <li><span class="whom">Me</span>Move down the roadmap, one task at a time, with a short Loom for each.</li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="price-h">
+    <h2 id="price-h">Packages</h2>
+    <p class="sub">Hourly at $30/hr through Upwork. You approve each step before I start it.</p>
+    <div class="tiers">
+      <div class="tier"><h3>Planning session</h3><div class="price">$60</div><p class="for">About two hours.</p><ul><li>This planner on your real week</li><li>The first automation specified</li><li>Tool list with monthly costs</li></ul></div>
+      <div class="tier featured" data-testid="featured"><span class="badge2">Best value</span><h3>First month</h3>
+        <div class="price">$360<s>$720</s></div><p class="for">About twelve hours: plan plus two automations live.</p>
+        <table class="stack" aria-label="What is included">
+          <tr><td>Planning session on your real week</td><td>$60</td></tr>
+          <tr><td>Automation one (for example, social posts)</td><td>$180</td></tr>
+          <tr><td>Automation two (for example, lead follow-up)</td><td>$150</td></tr>
+          <tr><td>Your AI playbook written up in Notion</td><td>$90</td></tr>
+          <tr class="bonus"><td>A Loom walkthrough for each automation</td><td>$60</td></tr>
+          <tr class="bonus"><td>Fourteen days of tweaks after launch</td><td>$180</td></tr>
+          <tr class="total"><td>Value if bought separately</td><td>$720</td></tr>
+        </table></div>
+      <div class="tier"><h3>Ongoing teammate</h3><div class="price">$300<span style="font-size:16px;font-weight:400">/week</span></div><p class="for">About ten hours a week.</p><ul><li>Next task on the roadmap each week</li><li>Fixes and tweaks to what's live</li><li>Weekly check-in and summary</li></ul></div>
+    </div>
+  </section>
+
+  <section aria-label="Next step">
+    <div class="cta"><h2>Send me your week.</h2>
+      <p>Reply in our Upwork chat with the five tasks that take most of your time and roughly how long each takes. I’ll run them through this planner so you see your own roadmap before we start.</p>
+      <p class="urgency">I can start this week.</p></div>
+  </section>
+
+  <section aria-labelledby="need-h">
+    <h2 id="need-h">What I need from you to start</h2>
+    <ul class="need"><li>Your five most time-consuming weekly tasks.</li><li>The tools you already pay for.</li><li>Logins for the first automation’s tools.</li><li>Examples of replies and posts you like.</li></ul>
+  </section>
+
+  <section aria-labelledby="hood-h">
+    <h2 id="hood-h">Under the hood</h2>
+    <pre class="tree">ai-task-planner/
+  index.html               this page
+  src/plannerEngine.js     input checks, fit score, hours saved, build cost, payback, approval rule, roadmap
+  data/sample.json         an invented week for a small business with a social media side
+  tests/verify.js          21 tests against src/plannerEngine.js
+  tests/browser-check.py   drives this page in a real browser</pre>
+    <p class="sub">The page and the tests load the same engine file, so what you just used is what was tested.</p>
+  </section>
+</main>
+<footer><div class="wrap">
+  <p>Built from the job post. The tasks, hours and figures are an invented example week, and nothing here is connected to your accounts. Savings and payback are estimates from the stated assumptions, not guarantees. The scoring, roadmap and the 21 passing tests are real. No prior work for your business is claimed. This page will be taken down about 30 days after it was sent.</p>
+  <p>Built by Taiwo, Pathfinder Automation Solutions.</p>
+</div></footer>
+<script src="src/plannerEngine.js"></script>
+<script>
+(function () {
+  'use strict';
+  var FALLBACK = {"_note":"An invented week for a small business with a social media side. Tasks and hours are examples, not anyone's real data.","tasks":[{"id":"t1","name":"Write and schedule Facebook and Instagram posts","category":"content","hoursPerWeek":5,"repetitive":4,"judgment":3,"digital":true,"risk":"medium"},{"id":"t2","name":"Reply to DMs and comments","category":"inbox","hoursPerWeek":4,"repetitive":4,"judgment":3,"digital":true,"risk":"medium"},{"id":"t3","name":"Follow up with leads from the website and social","category":"leads","hoursPerWeek":3,"repetitive":5,"judgment":2,"digital":true,"risk":"low"},{"id":"t4","name":"Answer common customer emails","category":"inbox","hoursPerWeek":3,"repetitive":4,"judgment":2,"digital":true,"risk":"low"},{"id":"t5","name":"Sort receipts for the bookkeeper","category":"bookkeeping","hoursPerWeek":3,"repetitive":5,"judgment":1,"digital":false,"risk":"low"},{"id":"t6","name":"Put together the weekly sales numbers","category":"reporting","hoursPerWeek":1.5,"repetitive":5,"judgment":1,"digital":true,"risk":"low"},{"id":"t7","name":"Type the outbound call list into a spreadsheet","category":"data","hoursPerWeek":3,"repetitive":5,"judgment":1,"digital":true,"risk":"low"},{"id":"t8","name":"Edit product photos","category":"creative","hoursPerWeek":2,"repetitive":3,"judgment":4,"digital":true,"risk":"low"},{"id":"t9","name":"Negotiate with suppliers","category":"calls","hoursPerWeek":2,"repetitive":2,"judgment":5,"digital":false,"risk":"high"}]};
+  var P = window.PlannerEngine;
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s === null || s === undefined ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function money(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+  var ORIG, T, n = 0;
+  var CAT = { content: 'Content', leads: 'Leads', inbox: 'Inbox', bookkeeping: 'Bookkeeping', reporting: 'Reporting', data: 'Data entry', creative: 'Creative', calls: 'Calls' };
+  function sel(field, val, opts, id) { return '<select data-k="' + field + '" data-id="' + id + '">' + opts.map(function (o) { var v = o[0], l = o[1]; return '<option value="' + v + '"' + (String(v) === String(val) ? ' selected' : '') + '>' + l + '</option>'; }).join('') + '</select>'; }
+  function one5(field, val, id) { return sel(field, val, [1, 2, 3, 4, 5].map(function (x) { return [x, x]; }), id); }
+  function load(d) { ORIG = clone(d.tasks); T = clone(d.tasks); n = 0; drawTable(); render(); }
+  function drawTable() {
+    $('rows').innerHTML = T.map(function (t) {
+      var id = esc(t.id);
+      return '<tr data-testid="task-' + id + '"><td class="nm"><input type="text" data-k="name" data-id="' + id + '" value="' + esc(t.name) + '" data-testid="name-' + id + '"></td><td>' + sel('category', t.category, Object.keys(CAT).map(function (k) { return [k, CAT[k]]; }), id) +
+        '</td><td><input type="number" step="0.5" data-k="hoursPerWeek" data-id="' + id + '" value="' + esc(t.hoursPerWeek) + '" data-testid="hours-' + id + '"></td><td>' + one5('repetitive', t.repetitive, id) + '</td><td>' + one5('judgment', t.judgment, id) +
+        '</td><td><input type="checkbox" data-k="digital" data-id="' + id + '"' + (t.digital ? ' checked' : '') + ' data-testid="digital-' + id + '"></td><td>' + sel('risk', t.risk, [['low', 'Low'], ['medium', 'Medium'], ['high', 'High']], id) +
+        '</td><td data-fit="' + id + '"></td><td data-saved="' + id + '"></td><td><button type="button" class="x" data-rm="' + id + '" aria-label="Remove task" data-testid="rm-' + id + '">×</button></td></tr>';
+    }).join('');
+  }
+  function card(r) { return '<div class="cardn" data-testid="card" data-id="' + esc(r.id) + '"><b>' + esc(r.name) + '</b><p>' + esc(r.recipe) + '</p><small>Saves about ' + r.saved + ' h/wk · build ' + money(r.cost) + ' · pays back in ' + (isFinite(r.payback) ? r.payback + ' wk' : 'never') + '</small><small>' + esc(r.tools) + '</small><span class="mode' + (/own/.test(r.mode) ? ' auto' : '') + '">' + esc(r.mode) + '</span></div>'; }
+  function render() {
+    var R = P.plan(T, { ownerRate: Number($('sRate').value) || 1, buildRate: Number($('sBuild').value) || 1 });
+    T.forEach(function (t) { var r = R.rows.filter(function (x) { return x.id === t.id; })[0], f = document.querySelector('[data-fit="' + t.id + '"]'), s = document.querySelector('[data-saved="' + t.id + '"]');
+      if (f) f.innerHTML = r ? '<span class="fit ' + r.fit + '">' + r.fit + '</span>' : '<span class="fit low">check row</span>'; if (s) s.textContent = r ? r.saved + ' h' : '-'; });
+    $('skipped').hidden = !R.skipped.length; $('skipped').textContent = R.skipped.length ? 'Set aside: ' + R.skipped.map(function (s) { return s.name + ' (' + s.reasons.join(', ') + ')'; }).join('; ') : '';
+    var t = R.totals;
+    $('sum').innerHTML = '<div><small>Hours back each week</small><b data-testid="t-saved">' + t.hoursSaved + '</b></div><div><small>Value a month</small><b data-testid="t-value">' + money(t.monthlyValue) + '</b></div><div><small>One-time build</small><b data-testid="t-cost">' + money(t.buildCost) + '</b></div><div><small>Pays back in</small><b data-testid="t-payback">' + (t.paybackWeeks === null ? '-' : t.paybackWeeks + ' wk') + '</b></div>';
+    var cols = [['Week 1', 'week1'], ['Weeks 2 to 4', 'weeks2to4'], ['Later', 'later'], ['Not yet', 'notYet']];
+    $('road').innerHTML = cols.map(function (c) { var list = R.roadmap[c[1]]; return '<div class="col" data-testid="col-' + c[1] + '"><h5>' + c[0] + ' (' + list.length + ')</h5>' + (list.length ? list.map(card).join('') : '<div class="empty">Nothing here.</div>') + '</div>'; }).join('');
+  }
+  $('rows').addEventListener('input', function (e) { var el = e.target, k = el.dataset.k; if (!k) return; var t = T.filter(function (x) { return x.id === el.dataset.id; })[0]; if (!t) return;
+    t[k] = el.type === 'checkbox' ? el.checked : (k === 'hoursPerWeek' ? (el.value === '' ? '' : Number(el.value)) : (k === 'repetitive' || k === 'judgment') ? Number(el.value) : el.value); render(); });
+  $('rows').addEventListener('change', function (e) { if (e.target.tagName === 'SELECT' || e.target.type === 'checkbox') { var ev = new Event('input', { bubbles: true }); e.target.dispatchEvent(ev); } });
+  $('rows').addEventListener('click', function (e) { var b = e.target.closest('[data-rm]'); if (!b) return; T = T.filter(function (x) { return x.id !== b.dataset.rm; }); drawTable(); render(); });
+  $('add').addEventListener('click', function () { var id = 'new' + (++n); T.push({ id: id, name: '', category: 'data', hoursPerWeek: 1, repetitive: 3, judgment: 3, digital: true, risk: 'low' }); drawTable(); render(); var el = document.querySelector('[data-testid="name-' + id + '"]'); if (el) el.focus(); });
+  $('sRate').addEventListener('input', render); $('sBuild').addEventListener('input', render);
+  $('reset').addEventListener('click', function () { $('sRate').value = 50; $('sBuild').value = 30; load({ tasks: ORIG }); });
+  fetch('data/sample.json').then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(load).catch(function () { load(FALLBACK); });
+})();
+</script>
+</body>
+</html>

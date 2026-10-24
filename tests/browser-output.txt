@@ -1,0 +1,35 @@
+127.0.0.1 - - [24/Oct/2026 00:04:54] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Oct/2026 00:04:54] "GET /src/plannerEngine.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Oct/2026 00:04:54] "GET /data/sample.json HTTP/1.1" 200 -
+127.0.0.1 - - [24/Oct/2026 00:04:55] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Oct/2026 00:04:55] "GET /src/plannerEngine.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Oct/2026 00:04:55] "GET /data/sample.json HTTP/1.1" 200 -
+0. HTML tag balance
+PASS: all tags closed and nested
+1. Sample week
+PASS: 14.2 hours back a week, $1,170 build, 1.7 week payback
+PASS: week 1 is the social posts task
+PASS: supplier negotiation is 'not yet'
+PASS: posts are 'AI drafts, you approve'
+
+2. Change inputs
+PASS: posts at half an hour a week drop out of week 1
+PASS: $100 an hour of your time: payback falls to 0.9 weeks
+PASS: digital receipts: still high fit, saved hours shown
+
+3. Add and remove
+PASS: a blank new task is set aside with the reason
+PASS: named with 2 hours: it joins the plan
+PASS: zero hours is refused with a reason
+PASS: removing supplier negotiation empties 'not yet'
+
+4. Phone width
+PASS: no horizontal page scroll at 390px
+
+5. Off disk (file://, fallback data)
+PASS: file:// copy works on the embedded data
+
+6. Console
+PASS: zero console or page errors
+
+15 passed, 0 failed

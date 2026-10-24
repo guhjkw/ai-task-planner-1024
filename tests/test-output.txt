@@ -1,0 +1,32 @@
+1. The sample week
+PASS: 9 tasks, 26.5 hours a week
+PASS: about 14.2 hours saved a week from the 8 worth doing
+PASS: build cost $1,170 (39 hours at $30)
+PASS: pays back in about 1.7 weeks at $50 an hour of your time
+
+2. Scoring
+PASS: typing a call list into a sheet is a high fit (23 points)
+PASS: negotiating with suppliers is a low fit (1 point)
+PASS: editing photos is a medium fit
+PASS: paper receipts score lower than the same task already digital
+PASS: higher risk lowers the score
+
+3. Who approves
+PASS: social posts: AI drafts, you approve
+PASS: replying to customers: AI drafts, you approve
+PASS: the weekly numbers report runs on its own
+
+4. Roadmap
+PASS: week 1 is the fastest payback: social posts
+PASS: weeks 2 to 4: the call list and DMs
+PASS: supplier negotiation is "not yet"
+PASS: raising the value of your time shortens payback
+PASS: a 1-week payback limit moves everything to "not yet"
+PASS: cutting a task to half an hour drops it down the roadmap
+
+5. Bad input
+PASS: a task with no name and 0 hours is skipped with reasons
+PASS: repetitive 9 and an unknown risk are refused
+PASS: an empty week returns zero totals, no crash
+
+21 passed, 0 failed

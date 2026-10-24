@@ -1,0 +1,95 @@
+{
+ "_note": "An invented week for a small business with a social media side. Tasks and hours are examples, not anyone's real data.",
+ "tasks": [
+  {
+   "id": "t1",
+   "name": "Write and schedule Facebook and Instagram posts",
+   "category": "content",
+   "hoursPerWeek": 5,
+   "repetitive": 4,
+   "judgment": 3,
+   "digital": true,
+   "risk": "medium"
+  },
+  {
+   "id": "t2",
+   "name": "Reply to DMs and comments",
+   "category": "inbox",
+   "hoursPerWeek": 4,
+   "repetitive": 4,
+   "judgment": 3,
+   "digital": true,
+   "risk": "medium"
+  },
+  {
+   "id": "t3",
+   "name": "Follow up with leads from the website and social",
+   "category": "leads",
+   "hoursPerWeek": 3,
+   "repetitive": 5,
+   "judgment": 2,
+   "digital": true,
+   "risk": "low"
+  },
+  {
+   "id": "t4",
+   "name": "Answer common customer emails",
+   "category": "inbox",
+   "hoursPerWeek": 3,
+   "repetitive": 4,
+   "judgment": 2,
+   "digital": true,
+   "risk": "low"
+  },
+  {
+   "id": "t5",
+   "name": "Sort receipts for the bookkeeper",
+   "category": "bookkeeping",
+   "hoursPerWeek": 3,
+   "repetitive": 5,
+   "judgment": 1,
+   "digital": false,
+   "risk": "low"
+  },
+  {
+   "id": "t6",
+   "name": "Put together the weekly sales numbers",
+   "category": "reporting",
+   "hoursPerWeek": 1.5,
+   "repetitive": 5,
+   "judgment": 1,
+   "digital": true,
+   "risk": "low"
+  },
+  {
+   "id": "t7",
+   "name": "Type the outbound call list into a spreadsheet",
+   "category": "data",
+   "hoursPerWeek": 3,
+   "repetitive": 5,
+   "judgment": 1,
+   "digital": true,
+   "risk": "low"
+  },
+  {
+   "id": "t8",
+   "name": "Edit product photos",
+   "category": "creative",
+   "hoursPerWeek": 2,
+   "repetitive": 3,
+   "judgment": 4,
+   "digital": true,
+   "risk": "low"
+  },
+  {
+   "id": "t9",
+   "name": "Negotiate with suppliers",
+   "category": "calls",
+   "hoursPerWeek": 2,
+   "repetitive": 2,
+   "judgment": 5,
+   "digital": false,
+   "risk": "high"
+  }
+ ]
+}
